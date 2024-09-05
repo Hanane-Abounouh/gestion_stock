@@ -1,19 +1,22 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import './index.css';
+import './index.css';  // Assurez-vous que le chemin est correct
 import router from './router';
 import store from './store';
 import axios from 'axios';  // Importation d'axios
 
+// Créez l'application Vue
 const app = createApp(App);
 
-// Vous pouvez configurer axios ici, par exemple, pour définir une URL de base
-axios.defaults.baseURL = 'https://api.example.com';  // Exemple de configuration globale
+// Configuration globale d'Axios
+axios.defaults.baseURL = 'https://api.example.com';  // Remplacez par l'URL de votre API
 
+// Ajout d'Axios aux propriétés globales de Vue
+app.config.globalProperties.$axios = axios;
+
+// Utilisation du routeur et du store
 app.use(router);
 app.use(store);
 
-// Vous pouvez également ajouter axios à l'instance globale si vous voulez l'utiliser partout sans réimporter
-app.config.globalProperties.$axios = axios;  // Ajout d'axios aux propriétés globales
-
+// Montage de l'application Vue
 app.mount('#app');

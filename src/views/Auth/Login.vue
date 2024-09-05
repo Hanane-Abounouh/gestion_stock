@@ -1,3 +1,4 @@
+<!-- src/views/Auth/Login.vue -->
 <template>
   <div class="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
     <div class="relative py-3 sm:max-w-xl sm:mx-auto">
@@ -7,7 +8,7 @@
       <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
         <div class="max-w-md mx-auto">
           <div>
-            <h1 class="text-2xl font-semibold">Login</h1>
+            <h2 class="text-2xl font-bold text-center mb-6">Login</h2>
           </div>
           <div class="divide-y divide-gray-200">
             <div class="py-8 px-4 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
@@ -48,6 +49,7 @@
                   <button type="submit" class="bg-[#c65a1b] text-white rounded-md px-2 py-1">Login</button>
                 </div>
               </form>
+              <div v-if="errorMessage" class="text-red-500 text-center mt-4">{{ errorMessage }}</div>
               <div class="text-center mt-4">
                 <router-link to="/register" class="text-[#8d362d] hover:underline">Don't have an account? Register here.</router-link>
               </div>
@@ -61,6 +63,7 @@
 
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'LoginView',
@@ -68,8 +71,12 @@ export default {
     return {
       email: '',
       password: '',
-      errorMessage: '',
+      errorMessage: '' 
     };
+  },
+  setup() {
+    const router = useRouter();
+    return { router };
   },
   methods: {
     async login() {
@@ -79,19 +86,14 @@ export default {
           password: this.password
         });
 
-        if (response && response.data) {
-          localStorage.setItem('auth_token', response.data.token);
-          this.$router.push('/dashboard'); // Redirige vers le tableau de bord après la connexion
-        } else {
-          this.errorMessage = 'Invalid response from the server';
-        }
+        const { token } = response.data;
+        localStorage.setItem('authToken', token);
+
+        console.log('Connexion réussie');
+        this.$router.push('/dashboard');
       } catch (error) {
-        if (error.response && error.response.data && error.response.data.message) {
-          this.errorMessage = error.response.data.message;
-        } else {
-          this.errorMessage = 'An error occurred during login';
-        }
-        console.error('Login failed:', error);
+        console.error('Erreur de connexion:', error);
+        this.errorMessage = 'Email ou mot de passe incorrect';
       }
     }
   }
@@ -99,5 +101,5 @@ export default {
 </script>
 
 <style scoped>
-/* Ajoutez ici les styles spécifiques au formulaire de connexion si nécessaire */
+/* Ajoutez des styles personnalisés ici */
 </style>
